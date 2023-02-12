@@ -1,12 +1,25 @@
 import * as api from '../api'
-import { CREATE, DELETE, FETCH_ALL, FETCH_BY_SEARCH, LIKE, UPDATE } from '../constants/actionTypes';
+import { CREATE, DELETE, FETCH_POST, FETCH_ALL, START_LOADING, END_LOADING, FETCH_BY_SEARCH, LIKE, UPDATE } from '../constants/actionTypes';
 
 // Action Creators
 export const getPosts = (page) => async (dispatch) => {
   try {
+    dispatch({ type: START_LOADING });
     const { data } = await api.fetchPosts(page);
     console.log(data);
     dispatch({ type: FETCH_ALL, payload: data });
+    dispatch({ type: END_LOADING });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getPost = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: START_LOADING });
+    const { data } = await api.fetchPost(id);
+    dispatch({ type: FETCH_POST, payload: data })
+    dispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err);
   }
@@ -14,8 +27,10 @@ export const getPosts = (page) => async (dispatch) => {
 
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
+    dispatch({ type: START_LOADING });
     const response = await api.fetchPostsBySearch(searchQuery);
     dispatch({ type: FETCH_BY_SEARCH, payload: response.data });
+    dispatch({ type: END_LOADING });
     console.log(response.data);
   } catch (err) {
     console.log(err);
@@ -24,8 +39,10 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
 
 export const createPost = (post) => async (dispatch) => {
   try {
+    dispatch({ type: START_LOADING });
     const { data } = await api.createPost(post);
     dispatch({ type: CREATE, payload: data });
+    dispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err);
   }
